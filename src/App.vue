@@ -1,6 +1,7 @@
 
 <template>
-   aaa
+   <router-view />
+   <Signup />
 </template>
 
 <script setup lang="ts">
