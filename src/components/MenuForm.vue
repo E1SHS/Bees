@@ -47,6 +47,10 @@ export default {
         };
     },
     methods: {
+        handlesubmit() {
+            console.log('Form submitted');
+            
+        },
         navigateToFeedBees() {
             console.log('Navigating to mite assessment route');
             this.$router.push({ name: 'feed' });
