@@ -1,7 +1,7 @@
 
 <template>
+    <Signup />
    <router-view />
-   <Signup />
 </template>
 
 <script setup lang="ts">
