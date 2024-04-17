@@ -60,12 +60,18 @@ export default {
         };
     },
     mounted() {
-        const dateInput = document.getElementById('dateInput');
+        const dateInput = document.getElementById('dateInput') as HTMLInputElement;
+    if (dateInput) {
         const today = new Date().toISOString().substr(0, 10);
         dateInput.value = today;
         this.date = today;
+    }
   },
     methods: {
+        handlesubmit() {
+            console.log('Form submitted');
+            
+        }
        
     }
 }
