@@ -31,7 +31,7 @@
     </form> 
 </template>
 
-<script>
+<script lang="ts">
 export default {
     data() {
         return{
