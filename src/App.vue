@@ -5,9 +5,6 @@
 </template>
 
 <script setup lang="ts">
-
-import SignupForm from './components/SignupForm.vue';
-
 </script>
 <style lang="scss" scoped>
 // @import "./scss/variables";
