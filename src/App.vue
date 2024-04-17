@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import SignupForm from './components/SignupForm.vue';
-import MenuForm from './components/MenuForm.vue';
 
 </script>
 <style lang="scss" scoped>
