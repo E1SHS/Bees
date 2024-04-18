@@ -1,6 +1,6 @@
 
 <template>
-  <Signup />
+  <SignupForm />
    <router-view />
 </template>
 
