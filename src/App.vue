@@ -18,7 +18,7 @@ import SignupForm from './components/SignupForm.vue';
   -webkit-font-smothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #a41111;
+  color: #a41111; 
   margin-top: 60px;
 }
 body{
