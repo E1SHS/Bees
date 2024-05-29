@@ -1,12 +1,12 @@
-// Lux 5.3.3
-// Bootswatch
-@import "./variables";
-// Variables  
+@import 'bootstrap/scss/bootstrap'; // Import Bootstrap styles
+@import 'bootswatch/dist/lux/variables'; // Import Bootswatch theme variables
+@import 'bootswatch/dist/lux/bootswatch'; // Import Bootswatch theme styles
 
 $web-font-path: "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;500;600;700&display=swap" !default;
 @if $web-font-path {
   @import url("#{$web-font-path}");
 }
+
 
 // Navbar
 

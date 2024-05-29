@@ -88,6 +88,7 @@ export default {
             console.log('Navigating to treatment assessment route');
             this.$router.push({ name: 'flora' });
         }
+
 }
 }
 </script>

@@ -1,29 +1,27 @@
-
 <template>
-  <SignupForm />
-   <router-view />
+  <router-view> </router-view>
 </template>
 
-<script setup lang="ts">
-import SignupForm from './components/SignupForm.vue';
-</script>
-<style lang="scss" scoped>
-// @import "./scss/variables";
-// @import "./scss/bootstrap";
-// @import "./scss/bootswatch"; 
+<script setup>
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;500;600;700&display=swap');
+</script>
+
+<style lang="scss">
+@import '@/assets/_bootswatch.scss';
+@import '@/assets/_variables.scss';
+@import 'bootstrap/dist/css/bootstrap.css';
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  margin: 0;
+  background: #eee;
+}
 
 #app {
-  -webkit-font-smothing: antialiased;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #a41111; 
   margin-top: 60px;
 }
-body{
-  font-family: 'Nunito Sans', sans-serif;
-  margin: 0;
-  background: #eee;
-}
-</style>  
+</style>
