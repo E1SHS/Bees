@@ -107,9 +107,5 @@
     -webkit-animation: spinner-border .75s linear infinite;
     animation: spinner-border .75s linear infinite;
   }
-  
-  .error {
-    color: red;
-  }
   </style>
   

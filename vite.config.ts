@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
+import viteSassDts from 'vite-plugin-sass-dts';
 
 export default defineConfig({
   plugins: [
-    vue()
+    vue(),
   ],
   resolve: {
     alias: {
@@ -12,5 +13,6 @@ export default defineConfig({
     }
   }
 });
+
 
 

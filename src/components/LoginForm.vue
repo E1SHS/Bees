@@ -19,7 +19,7 @@
       <div v-if="passwordError" class="alert alert-danger">{{ passwordError }}</div>
       
       <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-primary" :disabled="isLoading" type="submit">Login</button>
+        <button class="btn btn-primary " :disabled="isLoading" type="submit">Login</button>
         <div v-if="isLoading" class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
@@ -44,8 +44,8 @@ const router = useRouter();
 const handleSubmit = async () => {
   console.log('Form submitted');
 
-  // Validate password length
-  passwordError.value = password.value.length >= 6 ? '' : 'Password length must be at least 6 characters long';
+
+  passwordError.value = password.value.length >= 4 ? '' : 'Password length must be at least 4 characters long';
 
   if (!passwordError.value) {
     isLoading.value = true;
@@ -60,6 +60,7 @@ const handleSubmit = async () => {
 
       const { token } = response.data;
       localStorage.setItem('token', token);
+
 
       router.push({ name: 'menu' });
     } catch (error: any) {
@@ -84,21 +85,3 @@ const redirectToRegistrationPage = () => {
   router.push({ name: 'register' });
 };
 </script>
-
-<style scoped>
-.spinner-border {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  vertical-align: -0.125em;
-  border: 0.25em solid;
-  border-right: 0.25em solid transparent;
-  border-radius: 50%;
-  -webkit-animation: spinner-border 0.75s linear infinite;
-  animation: spinner-border 0.75s linear infinite;
-}
-
-.error {
-  color: red;
-}
-</style>

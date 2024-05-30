@@ -97,12 +97,4 @@ const handleSubmit = async () => {
   -webkit-animation: spinner-border 0.75s linear infinite;
   animation: spinner-border 0.75s linear infinite;
 }
-
-.error {
-  color: red;
-}
-
-.success-message {
-  color: green;
-}
 </style>
