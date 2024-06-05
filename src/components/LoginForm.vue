@@ -2,8 +2,9 @@
   <div class="container mt-5">
     <form @submit.prevent="handleSubmit" class="w-50 mx-auto">
       <div class="mb-3">
-        <label for="email" class="form-label">Username:</label>
-        <input type="text" class="form-control" id="email" required v-model="email" />
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" class="form-control" id="email" required v-model="email" @input="validateEmail" />
+        <div v-if="emailError" class="alert alert-danger">{{ emailError }}</div>
       </div>
 
       <div class="mb-3">
@@ -19,7 +20,7 @@
       <div v-if="passwordError" class="alert alert-danger">{{ passwordError }}</div>
       
       <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-primary " :disabled="isLoading" type="submit">Login</button>
+        <button class="btn btn-primary" :disabled="isLoading || !!emailError || !!passwordError" type="submit">Login</button>
         <div v-if="isLoading" class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
@@ -36,31 +37,41 @@ import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
+const emailError = ref<string>('');
 const passwordError = ref<string>('');
 const isLoading = ref(false);
 const showPassword = ref(false);
 const router = useRouter();
 
+const validateEmail = () => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email.value)) {
+    emailError.value = 'Please enter a valid email address.';
+  } else {
+    emailError.value = '';
+  }
+};
+
 const handleSubmit = async () => {
   console.log('Form submitted');
 
+  // Validate password length
+  passwordError.value = password.value.length >= 6 ? '' : 'Password length must be at least 6 characters long';
 
-  passwordError.value = password.value.length >= 4 ? '' : 'Password length must be at least 4 characters long';
-
-  if (!passwordError.value) {
+  if (!passwordError.value && !emailError.value) {
     isLoading.value = true;
 
     try {
       const response = await axios.post('http://localhost:5001/auth/login', {
-        username: email.value,
+        username: email.value, // Send email as username
         password: password.value
       });
 
       console.log('Server response:', response.data);
 
+      // Save the token to localStorage (or other storage) if needed
       const { token } = response.data;
       localStorage.setItem('token', token);
-
 
       router.push({ name: 'menu' });
     } catch (error: any) {
@@ -85,3 +96,21 @@ const redirectToRegistrationPage = () => {
   router.push({ name: 'register' });
 };
 </script>
+
+<style scoped>
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: -0.125em;
+  border: 0.25em solid;
+  border-right: 0.25em solid transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border 0.75s linear infinite;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+.error {
+  color: red;
+}
+</style>
