@@ -55,8 +55,8 @@ const router = createRouter({
       component: () => import('@/components/RequeenForm.vue'),
     },
     {
-      path: '/flora',
-      name: 'flora',
+      path: '/documentflora',
+      name: 'documentflora',
       component: () => import('@/components/DocumentFloraForm.vue'),
     },
     {
