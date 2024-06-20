@@ -14,6 +14,13 @@
       </div>
 
       <div class="mb-3">
+        <label for="hive" class="form-label">Hive:</label>
+        <select class="form-select" id="hive" v-model="hive">
+          <option v-for="h in hives" :key="h" :value="`Hive ${h}`">Hive {{ h }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
         <label for="bloom" class="form-label">What is blooming?</label>
         <input type="text" class="form-control" id="bloom" v-model="bloom" placeholder="What is blooming?" />
       </div>
@@ -42,6 +49,7 @@
           <div class="accordion-body">
             <p><strong>Date of record:</strong> {{ item.date }}</p>
             <p><strong>Location:</strong> {{ item.location }}</p>
+            <p><strong>Hive:</strong> {{ item.hive }}</p>
             <p><strong>What is blooming:</strong> {{ item.bloom }}</p>
             <p><strong>Notes:</strong> {{ item.notes }}</p>
           </div>
@@ -54,6 +62,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useHiveStore } from '@/stores/hiveStore';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const token = localStorage.getItem('token');
@@ -62,16 +71,21 @@ const headers = { Authorization: `Bearer ${token}` };
 type Item = {
   date: string;
   location: string;
+  hive: string;
   bloom: string;
   notes: string;
 };
 
 const date = ref(new Date().toISOString().substr(0, 10));
 const location = ref('');
+const hive = ref('Hive 1');
 const bloom = ref('');
 const notes = ref('');
 const dataList = ref<Item[]>([]);
 const isLoading = ref(false);
+
+const hiveStore = useHiveStore();
+const hives = ref<number[]>(hiveStore.hives);
 
 onMounted(async () => {
   await loadDatabaseEntries();
@@ -94,6 +108,7 @@ async function handleSubmit() {
     const response = await axios.post<Item>('http://localhost:5001/auth/documentflora', {
       date: date.value,
       location: location.value,
+      hive: hive.value,
       bloom: bloom.value,
       notes: notes.value,
     }, { headers });

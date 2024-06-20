@@ -2,10 +2,10 @@
   <div class="container mt-5 shadow-container">
     <h1 class="mb-4 text-center text-muted">Bee Management Menu</h1>
     <h2 class="mb-4 text-center text-muted">Current Number of Hives: {{ hiveCount }}</h2>
-    <form @submit.prevent="handlesubmit" class="text-center">
+    <div class="text-center">
       <div class="row g-3">
         <div class="col-12 col-md-6">
-          <button type="button" class="btn btn-dark btn-lg w-100 mb-3 shadow-button" @click="navigateTo('feed')">
+          <button type="button" class="btn btn-dark btn-lg w-100 mb-3 shadow-button" @click="navigateToFeed">
             <i class="bi bi-box-seam"></i> Feed Bees
           </button>
           <button type="button" class="btn btn-dark btn-lg w-100 mb-3 shadow-button" @click="navigateTo('mite')">
@@ -44,7 +44,7 @@
           </button>
         </div>
       </div>
-    </form>
+    </div>
 
     <!-- Delete Hive Modal -->
     <div v-if="isDeleteModalVisible" class="modal">
@@ -52,7 +52,7 @@
         <span class="close" @click="closeDeleteHiveModal">&times;</span>
         <h2>Delete Hive</h2>
         <select v-model="selectedHiveId">
-          <option v-for="hive in hives" :key="hive._id" :value="hive._id">{{ hive.name }}</option>
+          <option v-for="hive in hives" :key="hive" :value="hive">Hive {{ hive }}</option>
         </select>
         <button class="btn btn-danger mt-3" @click="deleteHive">Delete</button>
       </div>
@@ -62,85 +62,106 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { defineComponent } from 'vue';
-import type { Hive } from '../types'; // Adjust the path as needed
-import type { AxiosResponse } from 'axios';
+import { defineComponent, ref, onMounted, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
+import { useHiveStore } from '@/stores/hiveStore';
 
 export default defineComponent({
-  data() {
-    return {
-      hives: [] as Hive[],
-      selectedHiveId: null as string | null,
-      isDeleteModalVisible: false
-    };
-  },
-  computed: {
-    hiveCount(): number {
-      return this.hives.length;
-    }
-  },
-  methods: {
-    handlesubmit() {
-      console.log('Form submitted');
-    },
-    async addHive() {
-  try {
-    const response: AxiosResponse<Hive> = await axios.post('http://localhost:5001/auth/hives', {
-      name: `Hive ${this.hives.length + 1}` // Izveidojam nosaukumu ar esošo stropu skaitu
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    this.hives.push(response.data);
-    alert('Hive added successfully');
-  } catch (error) {
-    console.error('Error adding hive:', error);
-    alert('Failed to add hive');
-  }
-},
-    async fetchHives() {
+  setup() {
+    const router = useRouter();
+    const hiveStore = useHiveStore();
+    const selectedHiveId = ref<number | null>(null);
+    const isDeleteModalVisible = ref(false);
+
+    const fetchHives = async () => {
       try {
-        const response: AxiosResponse<Hive[]> = await axios.get('http://localhost:5001/auth/hives', {
+        const response = await axios.get('http://localhost:5001/auth/hives', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        this.hives = response.data;
+        hiveStore.setHives(response.data.map((hive: any) => hive.number));
       } catch (error) {
         console.error('Error fetching hives:', error);
       }
-    },
-    showDeleteHiveModal() {
-      this.fetchHives();
-      this.isDeleteModalVisible = true;
-      console.log ('files fetched')
-    },
-    closeDeleteHiveModal() {
-      this.isDeleteModalVisible = false;
-    },
-    async deleteHive() {
+    };
+
+    const addHive = async () => {
       try {
-        await axios.delete(`http://localhost:5001/auth/hives/${this.selectedHiveId}`, {
+        const newHiveNumber = hiveStore.hives.length ? Math.max(...hiveStore.hives) + 1 : 1;
+        await axios.post('http://localhost:5001/auth/hives', {
+          number: newHiveNumber
+        }, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        this.hives = this.hives.filter(hive => hive._id !== this.selectedHiveId);
-        this.closeDeleteHiveModal();
-        alert('Hive deleted successfully');
+        hiveStore.addHive(newHiveNumber);
+        await fetchHives(); // Refetch hives after adding a new hive
+        alert('Hive added successfully');
       } catch (error) {
-        console.error('Error deleting hive:', error);
-        alert('Failed to delete hive');
+        console.error('Error adding hive:', error);
+        alert('Failed to add hive');
       }
-    },
-    navigateTo(route: string) {
-      console.log(`Navigating to ${route} route`);
-      this.$router.push({ name: route });
-    }
-  },
-  mounted() {
-    this.fetchHives();
+    };
+
+    const deleteHive = async () => {
+      if (selectedHiveId.value !== null) {
+        try {
+          await axios.delete(`http://localhost:5001/auth/hives/${selectedHiveId.value}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          hiveStore.removeHive(selectedHiveId.value);
+          await fetchHives(); // Refetch hives after deleting a hive
+          closeDeleteHiveModal();
+          alert('Hive deleted successfully');
+        } catch (error) {
+          console.error('Error deleting hive:', error);
+          alert('Failed to delete hive');
+        }
+      }
+    };
+
+    const showDeleteHiveModal = () => {
+      fetchHives();
+      isDeleteModalVisible.value = true;
+    };
+
+    const closeDeleteHiveModal = () => {
+      isDeleteModalVisible.value = false;
+    };
+
+    const navigateToFeed = () => {
+      router.push({ name: 'feed' });
+    };
+
+    const navigateTo = (route: string) => {
+      router.push({ name: route });
+    };
+
+    onMounted(() => {
+      fetchHives();
+    });
+
+    watchEffect(() => {
+      // Refetch hives whenever the hives state changes
+      fetchHives();
+    });
+
+    return {
+      hives: hiveStore.hives,
+      selectedHiveId,
+      isDeleteModalVisible,
+      addHive,
+      deleteHive,
+      showDeleteHiveModal,
+      closeDeleteHiveModal,
+      navigateToFeed,
+      navigateTo,
+      hiveCount: hiveStore.hiveCount
+    };
   }
 });
 </script>

@@ -16,7 +16,7 @@
       <div class="mb-3">
         <label for="hive" class="form-label">Hive:</label>
         <select class="form-select" id="hive" v-model="hive">
-          <option v-for="option in hiveOptions" :value="option.value" :key="option.value">{{ option.label }}</option>
+          <option v-for="h in hives" :key="h" :value="`Hive ${h}`">Hive {{ h }}</option>
         </select>
       </div>
 
@@ -76,6 +76,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useHiveStore } from '@/stores/hiveStore';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const token = localStorage.getItem('token');
@@ -101,13 +102,8 @@ const notes = ref('');
 const dataList = ref<Item[]>([]);
 const isLoading = ref(false);
 
-const hiveOptions = ref([
-  { value: '1. Hive', label: '1.' },
-  { value: '2. Hive', label: '2.' },
-  { value: '3. Hive', label: '3.' },
-  { value: '4. Hive', label: '4.' },
-  { value: '5. Hive', label: '5.' }
-]);
+const hiveStore = useHiveStore();
+const hives = ref<number[]>(hiveStore.hives);
 
 const unitOptions = ref([
   { value: 'Pounds', label: 'Pounds' },
@@ -185,4 +181,3 @@ async function handleSubmit() {
   margin-top: 3rem;
 }
 </style>
-

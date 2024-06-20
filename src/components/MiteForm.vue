@@ -16,11 +16,7 @@
       <div class="mb-3">
         <label for="hive" class="form-label">Hive:</label>
         <select class="form-select" id="hive" v-model="hive">
-          <option value="1. Hive">1.</option>
-          <option value="2. Hive">2.</option>
-          <option value="3. Hive">3.</option>
-          <option value="4. Hive">4.</option>
-          <option value="5. Hive">5.</option>
+          <option v-for="h in hives" :key="h" :value="`Hive ${h}`">Hive {{ h }}</option>
         </select>
       </div>
 
@@ -82,6 +78,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useHiveStore } from '@/stores/hiveStore';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const token = localStorage.getItem('token');
@@ -106,6 +103,9 @@ const mites = ref<number>(0);
 const notes = ref('');
 const dataList = ref<Item[]>([]);
 const isLoading = ref(false);
+
+const hiveStore = useHiveStore();
+const hives = ref<number[]>(hiveStore.hives);
 
 onMounted(async () => {
   await loadMiteRecords();

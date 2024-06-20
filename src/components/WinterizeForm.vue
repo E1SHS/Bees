@@ -16,7 +16,7 @@
       <div class="mb-3">
         <label for="hive" class="form-label">Hive:</label>
         <select class="form-select" id="hive" v-model="hive">
-          <option v-for="hiveNumber in 5" :value="`Hive ${hiveNumber}`" :key="hiveNumber">{{`Hive ${hiveNumber}`}}</option>
+          <option v-for="h in hives" :key="h" :value="`Hive ${h}`">Hive {{ h }}</option>
         </select>
       </div>
 
@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useHiveStore } from '@/stores/hiveStore';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const token = localStorage.getItem('token');
@@ -77,13 +78,18 @@ interface WinterizeItem {
 
 const date = ref(new Date().toISOString().substr(0, 10));
 const location = ref('');
-const hive = ref('Hive 1');
+const hive = ref('');
 const todo = ref('');
 const notes = ref('');
 const dataList = ref<WinterizeItem[]>([]);
 const isLoading = ref(false);
 
+const hiveStore = useHiveStore();
+const hives = ref<number[]>(hiveStore.hives);
+
 onMounted(async () => {
+  await hiveStore.fetchHives(); // Ensure hives are loaded from the store
+  hives.value = hiveStore.hives; // Update the local hives reference
   await loadWinterizeRecords();
 });
 
